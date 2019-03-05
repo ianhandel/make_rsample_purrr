@@ -13,3 +13,5 @@ code/02_analyse.html output/figure_1.pdf: code/02_analyse.Rmd data/clean/mpg_dat
 		
 README.md: code/02_analyse.md
 		cp code/02_analyse.md README.md
+		mkdir 02_analyse_files
+		cp -R code/02_analyse_files 02_analyse_files
