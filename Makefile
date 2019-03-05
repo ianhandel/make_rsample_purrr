@@ -1,4 +1,4 @@
-all: code/02_analyse.html
+all: code/02_analyse.html output/figure_1.pdf
 
 clean:
 	rm -f data/data_clean/*.* ouputt/*.* code/*.html code/*.md
