@@ -1,0 +1,62 @@
+---
+title: "CV Analysis of mpg data"
+author: "Ian Handel"
+date: "2019-02-05"
+output: github_document
+---
+
+
+```{r}
+library(tidyverse)
+library(here)
+library(rsample)
+library(yardstick)
+library(broom)
+library(gt)
+```
+
+### Load clean data
+
+```{r}
+dat <- read_csv(here("data", "clean", "mpg_data_clean.csv"))
+```
+
+### Resample
+
+```{r}
+dat_cv <- dat %>%
+  rsample::vfold_cv(v = 10)
+
+print(dat_cv)
+```
+
+### Fit lm of hwy mpg on displacement and cylinder number
+
+```{r}
+dat_cv <- dat_cv %>% 
+  mutate(model = map(splits, ~lm(hwy ~ factor(cyl) + displ, data = as_tibble(.x)))) %>% 
+  mutate(fit = map(model, tidy))
+
+print(dat_cv)
+```
+
+### predict on withheld data
+
+```{r}
+dat_cv <- dat_cv %>% 
+  mutate(predict = map2(splits, model, ~tibble(predict = predict(.y, as_tibble(.x)[-.x$in_id,]),
+                                               actual = as_tibble(.x)[-.x$in_id, ]$hwy)))
+
+print(dat_cv)
+```
+
+### Add rmse
+
+```{r}
+dat_cv <- dat_cv %>% 
+  mutate(rmse = map(predict, ~rmse(.x, actual, predict))) %>% 
+  unnest(rmse)
+```
+
+
+
