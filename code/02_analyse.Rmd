@@ -33,8 +33,10 @@ print(cv)
 ### Fit lm of hwy mpg on displacement and cylinder number
 
 ```{r}
-cv <- cv %>% 
-  mutate(model = map(splits, ~lm(hwy ~ factor(cyl) + displ, data = as_tibble(.x)))) %>% 
+cv <- cv %>%
+  mutate(model = map(splits, ~ lm(hwy ~ factor(cyl) + displ,
+    data = as_tibble(.x)
+  ))) %>%
   mutate(fit = map(model, tidy))
 
 print(cv)
@@ -43,9 +45,14 @@ print(cv)
 ### predict on withheld data
 
 ```{r}
-cv <- cv %>% 
-  mutate(predict = map2(splits, model, ~tibble(predict = predict(.y, as_tibble(.x)[-.x$in_id,]),
-                                               actual = as_tibble(.x)[-.x$in_id, ]$hwy)))
+cv <- cv %>%
+  mutate(predict = map2(
+    splits,
+    model, ~ tibble(
+      predict = predict(.y, as_tibble(.x)[-.x$in_id, ]),
+      actual = as_tibble(.x)[-.x$in_id, ]$hwy
+    )
+  ))
 
 print(cv)
 ```
@@ -53,20 +60,20 @@ print(cv)
 ### Add rmse
 
 ```{r}
-cv <- cv %>% 
-  mutate(rmse = map(predict, ~rmse(.x, actual, predict))) %>% 
+cv <- cv %>%
+  mutate(rmse = map(predict, ~ rmse(.x, actual, predict))) %>%
   unnest(rmse)
 ```
 
 ### Plot fits
 
 ```{r}
-cv %>% 
+cv %>%
   unnest(fit) %>%
   ggplot() +
   aes(x = id, y = estimate) +
   geom_point() +
-  facet_wrap(~ term, scale = "free") +
+  facet_wrap(~term, scale = "free") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90))
 
@@ -77,9 +84,11 @@ ggsave(here("output", "figure_1.pdf"), height = 6, width = 5)
 
 ```{r}
 cv %>%
-  summarise(mean_rmse = mean(.estimate),
-            min_rmse = min(.estimate),
-            max_rmse = max(.estimate))
+  summarise(
+    mean_rmse = mean(.estimate),
+    min_rmse = min(.estimate),
+    max_rmse = max(.estimate)
+  )
 ```
 
 
