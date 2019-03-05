@@ -146,16 +146,16 @@ print(cv)
     ## # A tibble: 10 x 5
     ##    splits           id     model    fit              predict          
     ##  * <list>           <chr>  <list>   <list>           <list>           
-    ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
-    ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [24 × 2]>
+    ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [22 × 2]>
+    ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
     ##  3 <split [210/24]> Fold03 <S3: lm> <tibble [5 × 5]> <tibble [24 × 2]>
     ##  4 <split [210/24]> Fold04 <S3: lm> <tibble [5 × 5]> <tibble [19 × 2]>
-    ##  5 <split [211/23]> Fold05 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
+    ##  5 <split [211/23]> Fold05 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
     ##  6 <split [211/23]> Fold06 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
-    ##  7 <split [211/23]> Fold07 <S3: lm> <tibble [5 × 5]> <tibble [18 × 2]>
-    ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  7 <split [211/23]> Fold07 <S3: lm> <tibble [5 × 5]> <tibble [17 × 2]>
+    ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
     ##  9 <split [211/23]> Fold09 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
-    ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
 
 ### Add rmse
 
@@ -198,4 +198,4 @@ cv %>%
     ## # A tibble: 1 x 3
     ##   mean_rmse min_rmse max_rmse
     ##       <dbl>    <dbl>    <dbl>
-    ## 1      3.81     2.28     4.99
+    ## 1      4.00     2.55     4.93
