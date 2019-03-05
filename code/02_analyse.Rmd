@@ -12,7 +12,13 @@ library(here)
 library(rsample)
 library(yardstick)
 library(broom)
-library(gt)
+library(fs)
+```
+
+### create output director if not there
+
+```{r}
+fs::dir_create(here("output"))
 ```
 
 ### Load clean data
