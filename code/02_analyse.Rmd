@@ -41,7 +41,7 @@ print(cv)
 ```{r}
 cv <- cv %>%
   mutate(model = map(splits, ~ lm(hwy ~ factor(cyl) + displ,
-    data = as_tibble(.x)
+    data = analysis(.x)
   ))) %>%
   mutate(fit = map(model, tidy))
 
@@ -55,8 +55,8 @@ cv <- cv %>%
   mutate(predict = map2(
     splits,
     model, ~ tibble(
-      predict = predict(.y, as_tibble(.x)[-.x$in_id, ]),
-      actual = as_tibble(.x)[-.x$in_id, ]$hwy
+      predict = predict(.y, assessment(.x)),
+      actual = assessment(.x)$hwy
     )
   ))
 
