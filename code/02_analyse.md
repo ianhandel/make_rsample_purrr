@@ -7,14 +7,14 @@ Ian Handel
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0           ✔ purrr   0.3.0      
     ## ✔ tibble  2.0.99.9000     ✔ dplyr   0.7.8      
     ## ✔ tidyr   0.8.2           ✔ stringr 1.3.1      
     ## ✔ readr   1.3.1           ✔ forcats 0.3.0
 
-    ## ── Conflicts ───────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -128,16 +128,16 @@ print(dat_cv)
     ## # A tibble: 10 x 5
     ##    splits           id     model    fit              predict          
     ##  * <list>           <chr>  <list>   <list>           <list>           
-    ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
-    ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
-    ##  3 <split [210/24]> Fold03 <S3: lm> <tibble [5 × 5]> <tibble [22 × 2]>
+    ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [22 × 2]>
+    ##  3 <split [210/24]> Fold03 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
     ##  4 <split [210/24]> Fold04 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
-    ##  5 <split [211/23]> Fold05 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
-    ##  6 <split [211/23]> Fold06 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
-    ##  7 <split [211/23]> Fold07 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
-    ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ##  5 <split [211/23]> Fold05 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
+    ##  6 <split [211/23]> Fold06 <S3: lm> <tibble [5 × 5]> <tibble [19 × 2]>
+    ##  7 <split [211/23]> Fold07 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
     ##  9 <split [211/23]> Fold09 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
-    ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
 
 ### Add rmse
 
