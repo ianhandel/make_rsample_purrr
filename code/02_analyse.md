@@ -7,14 +7,26 @@ Ian Handel
 library(tidyverse)
 ```
 
+<<<<<<< HEAD
     ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+||||||| merged common ancestors
+    ## ── Attaching packages ────────────────────────────────────── tidyverse 1.2.1 ──
+=======
+    ## ── Attaching packages ──────────────────────── tidyverse 1.2.1 ──
+>>>>>>> f0bdd871d3580b4ed9b39b0f576bc137ae6dedd2
 
-    ## ✔ ggplot2 3.1.0           ✔ purrr   0.3.0      
+    ## ✔ ggplot2 3.1.0           ✔ purrr   0.2.5      
     ## ✔ tibble  2.0.99.9000     ✔ dplyr   0.7.8      
     ## ✔ tidyr   0.8.2           ✔ stringr 1.3.1      
     ## ✔ readr   1.3.1           ✔ forcats 0.3.0
 
+<<<<<<< HEAD
     ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+||||||| merged common ancestors
+    ## ── Conflicts ───────────────────────────────────────── tidyverse_conflicts() ──
+=======
+    ## ── Conflicts ─────────────────────────── tidyverse_conflicts() ──
+>>>>>>> f0bdd871d3580b4ed9b39b0f576bc137ae6dedd2
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -26,6 +38,11 @@ library(here)
 
 ``` r
 library(rsample)
+```
+
+    ## Warning: package 'rsample' was built under R version 3.5.2
+
+``` r
 library(yardstick)
 ```
 
@@ -41,7 +58,13 @@ library(yardstick)
 
 ``` r
 library(broom)
-library(gt)
+library(fs)
+```
+
+### create output director if not there
+
+``` r
+fs::dir_create(here("output"))
 ```
 
 ### Load clean data
@@ -68,10 +91,10 @@ dat <- read_csv(here("data", "clean", "mpg_data_clean.csv"))
 ### Resample
 
 ``` r
-dat_cv <- dat %>%
+cv <- dat %>%
   rsample::vfold_cv(v = 10)
 
-print(dat_cv)
+print(cv)
 ```
 
     ## #  10-fold cross-validation 
@@ -92,11 +115,13 @@ print(dat_cv)
 ### Fit lm of hwy mpg on displacement and cylinder number
 
 ``` r
-dat_cv <- dat_cv %>% 
-  mutate(model = map(splits, ~lm(hwy ~ factor(cyl) + displ, data = as_tibble(.x)))) %>% 
+cv <- cv %>%
+  mutate(model = map(splits, ~ lm(hwy ~ factor(cyl) + displ,
+    data = analysis(.x)
+  ))) %>%
   mutate(fit = map(model, tidy))
 
-print(dat_cv)
+print(cv)
 ```
 
     ## #  10-fold cross-validation 
@@ -117,17 +142,23 @@ print(dat_cv)
 ### predict on withheld data
 
 ``` r
-dat_cv <- dat_cv %>% 
-  mutate(predict = map2(splits, model, ~tibble(predict = predict(.y, as_tibble(.x)[-.x$in_id,]),
-                                               actual = as_tibble(.x)[-.x$in_id, ]$hwy)))
+cv <- cv %>%
+  mutate(predict = map2(
+    splits,
+    model, ~ tibble(
+      predict = predict(.y, assessment(.x)),
+      actual = assessment(.x)$hwy
+    )
+  ))
 
-print(dat_cv)
+print(cv)
 ```
 
     ## #  10-fold cross-validation 
     ## # A tibble: 10 x 5
     ##    splits           id     model    fit              predict          
     ##  * <list>           <chr>  <list>   <list>           <list>           
+<<<<<<< HEAD
     ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
     ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [22 × 2]>
     ##  3 <split [210/24]> Fold03 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
@@ -138,11 +169,69 @@ print(dat_cv)
     ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
     ##  9 <split [211/23]> Fold09 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
     ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
+||||||| merged common ancestors
+    ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
+    ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
+    ##  3 <split [210/24]> Fold03 <S3: lm> <tibble [5 × 5]> <tibble [22 × 2]>
+    ##  4 <split [210/24]> Fold04 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ##  5 <split [211/23]> Fold05 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ##  6 <split [211/23]> Fold06 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  7 <split [211/23]> Fold07 <S3: lm> <tibble [5 × 5]> <tibble [20 × 2]>
+    ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ##  9 <split [211/23]> Fold09 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+    ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [21 × 2]>
+=======
+    ##  1 <split [210/24]> Fold01 <S3: lm> <tibble [5 × 5]> <tibble [24 × 2]>
+    ##  2 <split [210/24]> Fold02 <S3: lm> <tibble [5 × 5]> <tibble [24 × 2]>
+    ##  3 <split [210/24]> Fold03 <S3: lm> <tibble [5 × 5]> <tibble [24 × 2]>
+    ##  4 <split [210/24]> Fold04 <S3: lm> <tibble [5 × 5]> <tibble [24 × 2]>
+    ##  5 <split [211/23]> Fold05 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  6 <split [211/23]> Fold06 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  7 <split [211/23]> Fold07 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  8 <split [211/23]> Fold08 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ##  9 <split [211/23]> Fold09 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+    ## 10 <split [211/23]> Fold10 <S3: lm> <tibble [5 × 5]> <tibble [23 × 2]>
+>>>>>>> f0bdd871d3580b4ed9b39b0f576bc137ae6dedd2
 
 ### Add rmse
 
 ``` r
-dat_cv <- dat_cv %>% 
-  mutate(rmse = map(predict, ~rmse(.x, actual, predict))) %>% 
+cv <- cv %>%
+  mutate(rmse = map(predict, ~ rmse(.x, actual, predict))) %>%
   unnest(rmse)
 ```
+
+### Plot fits
+
+``` r
+cv %>%
+  unnest(fit) %>%
+  ggplot() +
+  aes(x = id, y = estimate) +
+  geom_point() +
+  facet_wrap(~term, scale = "free") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+![](02_analyse_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+``` r
+ggsave(here("output", "figure_1.pdf"), height = 6, width = 5)
+```
+
+### Report RMSE
+
+``` r
+cv %>%
+  summarise(
+    mean_rmse = mean(.estimate),
+    min_rmse = min(.estimate),
+    max_rmse = max(.estimate)
+  )
+```
+
+    ## # A tibble: 1 x 3
+    ##   mean_rmse min_rmse max_rmse
+    ##       <dbl>    <dbl>    <dbl>
+    ## 1      3.68     2.86     5.92
