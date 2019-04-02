@@ -7,14 +7,14 @@ Ian Handel
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ──────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
-    ## ✔ ggplot2 3.1.0           ✔ purrr   0.2.5      
+    ## ✔ ggplot2 3.1.0           ✔ purrr   0.3.0      
     ## ✔ tibble  2.0.99.9000     ✔ dplyr   0.7.8      
     ## ✔ tidyr   0.8.2           ✔ stringr 1.3.1      
     ## ✔ readr   1.3.1           ✔ forcats 0.3.0
 
-    ## ── Conflicts ─────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -26,11 +26,6 @@ library(here)
 
 ``` r
 library(rsample)
-```
-
-    ## Warning: package 'rsample' was built under R version 3.5.2
-
-``` r
 library(yardstick)
 ```
 
@@ -49,7 +44,7 @@ library(broom)
 library(fs)
 ```
 
-### create output director if not there
+### create output directory if not there
 
 ``` r
 fs::dir_create(here("output"))
@@ -198,4 +193,4 @@ cv %>%
     ## # A tibble: 1 x 3
     ##   mean_rmse min_rmse max_rmse
     ##       <dbl>    <dbl>    <dbl>
-    ## 1      3.68     2.86     5.92
+    ## 1      3.73     2.93     5.40

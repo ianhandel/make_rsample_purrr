@@ -15,7 +15,7 @@ library(broom)
 library(fs)
 ```
 
-### create output director if not there
+### create output directory if not there
 
 ```{r}
 fs::dir_create(here("output"))
