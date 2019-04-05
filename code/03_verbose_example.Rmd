@@ -122,7 +122,7 @@ cv <- cv %>%
   unnest(rmse)
 ```
 
-And we can plots this too ...
+And we can plot this too ...
 
 ```{r}
 cv %>%
@@ -150,11 +150,17 @@ cv %>%
 
 ```
 
-And we could say something like:
 
-3.71     2.98     5.16
+We can also report the bootstrapped estimate for the model:
 
->As the number of cylinders in an engine increase and the engine displacement increases, the highway miles per gallon reduces (F ^4,229^ = 90.25, p < 0.001). On a cross-validated sample the mean RMSE of the model was 3.71mpg (min = 2.98mpg, max = 5.16mpg)
+```{r}
 
-
-_Note: the actual figures of the rmse may differ because its resampled each time this is compiled_
+# The summary statistics of regression coefficients for bootstrap regression based on the resampling errors (n=234, B=10)
+cv %>%
+  unnest(fit) %>%
+  group_by(term) %>%
+  summarise (estimate = mean(estimate), 
+             error = mean (std.error),
+             statistic = mean (statistic),
+             p = mean (p.value))
+```
