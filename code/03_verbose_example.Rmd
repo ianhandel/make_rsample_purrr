@@ -1,0 +1,166 @@
+---
+title: "CV Analysis of mpg data"
+author: "Ian Handel & Jill MacKay"
+date: "5 April 2019"
+output: html_document
+---
+
+
+# About
+Ian's code is always good, but I need a verbose explanation to understand things. This is my attempt. 
+
+
+## R Environment
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(here)
+library(rsample)
+library(yardstick)
+library(broom)
+library(fs)
+```
+
+
+## The Data
+
+
+```{r}
+# Create an output directory if you don't have one already
+fs::dir_create(here("output"))
+```
+
+```{r}
+# Load the clean data - see associated '01_import-and-clean.R'
+dat <- read_csv(here("data", "clean", "mpg_data_clean.csv"))
+```
+
+
+
+## What are we doing?
+
+Let's say we're interested in predicting something in the good old `mpg` dataset. We have a model that looks like this:
+
+```{r}
+model1 <- lm (formula = (hwy ~ factor(cyl) + displ), data = dat)
+
+dat %>%
+  ggplot(aes(y=hwy, x=displ, color=factor(cyl)))+
+  geom_point()+
+  stat_smooth(method="lm", se=TRUE)
+
+summary(model1)
+
+```
+Now we have a lovely model telling us that the number of cylinders in the engine (`cyl`) and engine displacement (`displ`) explain about 60% of the variation in highway miles per gallon (`hwy`) (F ^4,229^ = 90.25, p < 0.001).
+
+
+
+## Where's the problem?
+So far this is a very traditional approach to the `mpg` dataset. Why do we need to do anything different? 
+
+When we take a sample of a population, our statistics are estimates of the population. But how do we know how good our estimates are? We can't find out anything more about the population without collecting more data, but we can explore different parts of our _sample_ to see what the sample distribution of our statistics are. (I found the following [stackexhange discussion](https://stats.stackexchange.com/questions/26088/explaining-to-laypeople-why-bootstrapping-works) useful in getting to grips with this).
+
+Using the `rsample` and `purrr` packages, we can do this very quickly and neatly. 
+
+In other words, the below chunk of text is telling you how good the model is, but can we get a better estimate from this sample of data?
+
+> the number of cylinders in the engine (`cyl`) and engine displacement (`displ`) explain about 60% of the variation in highway miles per gallon (`hwy`) (F ^4,229^ = 90.25, p < 0.001).
+
+## Resampling
+
+We'll use `vfold_cv` to randomly split the data into 'folds', or groups which are close to equally sized. This creates a nice data frame of the data split and any identification variables. 
+
+```{r}
+cv <- dat %>%
+  rsample::vfold_cv(v = 10)
+
+print(cv)
+```
+
+
+## Fitting many models
+
+We want to run our same model on each fold of our data so we can get an idea of the range of estimates we're getting. 
+
+Note in the `print(cv)` command we see that the `splits` and `model` are S3 objects and `fit` is a tibble. `cv` is nesting these things due to `purrr::map`.
+
+
+```{r}
+cv <- cv %>%
+  mutate(model = map(splits, ~ lm(hwy ~ factor(cyl) + displ,
+    data = analysis(.x)
+  ))) %>%
+  mutate(fit = map(model, tidy))
+
+print(cv)
+```
+
+
+Now we want to generate predictions for each model on the witheld data. This uses `stats::predict` and `rsample::assessment`. 
+
+```{r}
+cv <- cv %>%
+  mutate(predict = map2(
+    splits,
+    model, ~ tibble(
+      predict = predict(.y, assessment(.x)),
+      actual = assessment(.x)$hwy
+    )
+  ))
+
+print(cv)
+```
+
+Now we have actual and predicted values for the data we can calculate the Root Mean Square Error ([which you can find out more about here](http://methods.sagepub.com/reference/encyc-of-research-design/n392.xml)). In brief, the RMSE is a measure of how good the model fits the data and is calculated from squaring and averaging the residuals and then square rooting this value to provide a single RMSE value for the model that is in the same unit as the original data (i.e. in this case, our RMSE will by highway miles per gallon)
+
+
+
+```{r}
+cv <- cv %>%
+  mutate(rmse = map(predict, ~ rmse(.x, actual, predict))) %>%
+  unnest(rmse)
+```
+
+And we can plot this too ...
+
+```{r}
+cv %>%
+  unnest(fit) %>%
+  ggplot() +
+  aes(x = id, y = estimate) +
+  geom_point() +
+  facet_wrap(~term, scale = "free") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggsave(here("output", "figure_1.pdf"), height = 6, width = 5)
+```
+
+
+The important thing to remember is we've always been using the same model, so now we can provide a minimum, maximum and mean RMSE across our cross-validated sample. 
+
+```{r}
+cv %>%
+  summarise(
+    mean_rmse = mean(.estimate),
+    min_rmse = min(.estimate),
+    max_rmse = max(.estimate)
+  )
+
+```
+
+
+We can also report the bootstrapped estimate for the model:
+
+```{r}
+
+# The summary statistics of regression coefficients for bootstrap regression based on the resampling errors (n=234, B=10)
+cv %>%
+  unnest(fit) %>%
+  group_by(term) %>%
+  summarise (estimate = mean(estimate), 
+             error = mean (std.error),
+             statistic = mean (statistic),
+             p = mean (p.value))
+```
